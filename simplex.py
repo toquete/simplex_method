@@ -1,16 +1,26 @@
 import numpy as np
 from pprintpp import pprint
 
+def print_matrix(matrix):
+    for i, row in enumerate(matrix):
+        for col in row:
+            print '%6.2f' % col,
+        print ''
+        if i == 0:
+            print ''
+    print '\n'
+
+
 #Funcao
-f = [-10, -6]
+f = [4, 1, 1]
 
 #Funcao objetivo artificial
 w = []
 
 sa = [
-    { 'type': 'ge', 'idx': [4, 2], 'z': 24},
-    { 'type': 'le', 'idx': [1, 0], 'z': 8},
-    { 'type': 'e', 'idx': [1, 2], 'z': 12}
+    { 'type': 'e', 'idx': [2.0, 1.0, 2.0], 'z': 4.0},
+    { 'type': 'e', 'idx': [3.0, 3.0, 1.0], 'z': 3.0},
+    # { 'type': 'e', 'idx': [1, 2], 'z': 12}
 ]
 
 #Add variaveis de folga ou de excesso
@@ -42,50 +52,65 @@ f.extend([0] * (len(mat[0]) - len(f)))
 w = [0] * (len(mat[0]) - len(w) - 1) + w + [0]
 mat_w = [w] + mat
 
+print_matrix(mat_w)
+
 #Definir quem e a base
-b =[]
+b = []
 for c_idx, col in enumerate(mat_w[0]):
     if col == 1:
-        b.append(c_idx)
-
-pprint(mat_w)
-
-#Pegar os 'pivos'
-# b_pivots = []
-while True:
-    for b_ in b:
-        b_row = 0
-
         #Pega linha do pivo
         for r_idx, row in enumerate(mat_w[1:]):
-            if row[b_] == 1:
-                b_row = r_idx + 1
+            if row[c_idx] == 1:
+                b.append([r_idx + 1, c_idx])
                 break
+
+#Primeira fase
+while True:
+    for b_ in b:
 
         #Zera as colunas da base
         for r_idx, row in enumerate(mat_w):
-            if r_idx != b_row:
-                coefficient = -(row[b_] / mat_w[b_row][b_])
+            if r_idx != b_[0]:
+                coefficient = -(row[b_[1]] / mat_w[b_[0]][b_[1]])
 
                 m_row = np.mat(row)
-                m_row_base = np.mat(mat_w[b_row])
+                m_row_base = np.mat(mat_w[b_[0]])
 
                 mat_w[r_idx] = np.asarray(m_row + (m_row_base * coefficient)).reshape(-1).tolist()
 
-    pprint(mat_w)
+    print_matrix(mat_w)
 
     b_tmp = None
     b_tmp_value = 0
 
     #Verifica se a funcao pode crescer
-    for c_idx, col in enumerate(mat_w[0]):
-
-        if col > b_tmp_value:
+    for c_idx, col in enumerate(mat_w[0][:-1]):
+        if col < b_tmp_value:
             b_tmp = c_idx
             b_tmp_value = col
 
-    if b_tmp:
-        print 'Pode crescer'
+    if b_tmp == None:
+        break
 
-    break
+    #Estudo do bloqueio
+    bloq_tmp = None
+    bloq_tmp_value = 999999 #Rever essa PORRA
 
+    for b_ in b:
+        #Ve qual dos valores e menor
+        try:
+            bloq_aux = mat_w[b_[0]][len(mat_w[b_[0]]) - 1] / mat_w[b_[0]][b_tmp]
+        except:
+            bloq_aux = 0
+
+        if bloq_aux >= 0 and bloq_aux < bloq_tmp_value:
+            bloq_tmp_value = bloq_aux
+            bloq_tmp = b_
+
+    #Altera no vetor base com a nova variavel
+    b[b.index(bloq_tmp)][1] = b_tmp
+
+    new_b = b[b.index(bloq_tmp)]
+
+    #Divide a linha pro pivo ser igual a 1
+    mat_w[new_b[0]] = np.asarray(np.mat(mat_w[new_b[0]]) / mat_w[new_b[0]][b_tmp]).reshape(-1).tolist()
