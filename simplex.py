@@ -49,6 +49,7 @@ mat = [eq['idx'] + [eq['z']] for eq in sa]
 f.extend([0] * (len(mat[0]) - len(f)))
 # mat = [f] + mat
 
+#Montando matriz do simplex da funcao objetivo artificial
 w = [0] * (len(mat[0]) - len(w) - 1) + w + [0]
 mat_w = [w] + mat
 
