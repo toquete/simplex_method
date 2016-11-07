@@ -64,8 +64,11 @@ for c_idx, col in enumerate(mat_w[0]):
                 b.append([r_idx + 1, c_idx])
                 break
 
+steps = 0
 #Primeira fase
 while True:
+    print 'PASSO %d' % steps
+
     for b_ in b:
 
         #Zera as colunas da base
@@ -114,3 +117,5 @@ while True:
 
     #Divide a linha pro pivo ser igual a 1
     mat_w[new_b[0]] = np.asarray(np.mat(mat_w[new_b[0]]) / mat_w[new_b[0]][b_tmp]).reshape(-1).tolist()
+
+    steps += 1
