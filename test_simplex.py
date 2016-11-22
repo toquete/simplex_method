@@ -79,7 +79,7 @@ class SimplexTest(unittest.TestCase):
         for i, x in enumerate(result):
             self.assertAlmostEqual(x, expected[i])
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_lista4(self):
         func = [2, 2, 3]
 
@@ -91,7 +91,7 @@ class SimplexTest(unittest.TestCase):
 
         result, z = simplex(func, sa)
 
-        self.assertAlmostEqual(z, 5)
+        self.assertAlmostEqual(z, 53)
 
         expected = [11, 8, 5]
         

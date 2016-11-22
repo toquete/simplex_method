@@ -1,7 +1,7 @@
 import numpy as np
 
 def print_matrix(matrix):
-    for xablau in range(0, len(matrix[0])):
+    for xablau in range(1, len(matrix[0]) + 1):
         print '%6d' % xablau,
     print '\n'
     for i, row in enumerate(matrix):
@@ -16,7 +16,7 @@ def print_matrix(matrix):
 def print_base(base):
     print 'BASE = {',
     for b_ in base:
-        print ' x%d ' % (b_[1]),
+        print ' x%d ' % (b_[1] + 1),
     print '}'
 
 def simplex(func, sa):
@@ -24,8 +24,14 @@ def simplex(func, sa):
     #Funcao objetivo artificial
     w = []
 
-    # Base
+    #Base
     b = []
+
+    #Numero de variaveis artificiais
+    aritificial_variables = 0
+
+    #Historico da base pra saber se ele voltou pra algum ponto
+    b_history = []
 
     #Add variaveis de folga ou de excesso
     for eq in sa:
@@ -51,6 +57,9 @@ def simplex(func, sa):
 
                     #Add variavel na funcao objetivo artifical
                     w.append(1)
+
+                    #Conta o numero de variaveis artificiais
+                    aritificial_variables += 1
                 else:
                     eq_['idx'].append(0)
 
@@ -68,6 +77,7 @@ def simplex(func, sa):
     steps = 0
     #Primeira fase
     while True:
+
         print_base(b)
 
         print 'PASSO %d' % steps
@@ -85,6 +95,9 @@ def simplex(func, sa):
                     mat[r_idx] = np.asarray(m_row + (m_row_base * coefficient)).reshape(-1).tolist()
 
         print_matrix(mat)
+
+        import copy
+        b_history.append(copy.deepcopy(b))
 
         b_tmp = None
         b_tmp_value = 0
@@ -104,10 +117,10 @@ def simplex(func, sa):
 
         for b_ in b:
             #Ve qual dos valores e menor
-            try:
-                bloq_aux = mat[b_[0]][-1] / mat[b_[0]][b_tmp]
-            except:
+            if mat[b_[0]][b_tmp] <= 0:
                 bloq_aux = -999999
+            else:
+                bloq_aux = mat[b_[0]][-1] / mat[b_[0]][b_tmp]
 
             if bloq_aux >= 0 and bloq_aux <= bloq_tmp_value:
                 bloq_tmp_value = bloq_aux
@@ -116,6 +129,12 @@ def simplex(func, sa):
         #Altera no vetor base com a nova variavel
         b[b.index(bloq_tmp)][1] = b_tmp
 
+        #Verifica se esta voltando pro mesmo ponto
+        if b in b_history:
+            b = b_history[-1]
+            print '\nSOLUCAO ADMITE INFINITAS SOLUCOES\n'
+            break
+
         new_b = b[b.index(bloq_tmp)]
 
         #Divide a linha pro pivo ser igual a 1
@@ -123,12 +142,11 @@ def simplex(func, sa):
 
         steps += 1
 
-        if steps == 10:
-            break
+    aritificial_variables += 1
 
     #Removendo as colunas das variaveis artificiais
     if not all(w_ == 0 for w_ in w):
-        mat = [x[:-3] + x[-1:] for x in mat]
+        mat = [x[:-aritificial_variables] + x[-1:] for x in mat]
 
     #Montando a matriz do simplex
     f = func + [0] * (len(mat[0]) - len(func))
@@ -170,7 +188,7 @@ def simplex(func, sa):
 
         #Estudo do bloqueio
         bloq_tmp = None
-        bloq_tmp_value = 999999 #Rever essa PORRA
+        bloq_tmp_value = 999999
 
         for b_ in b:
             #Ve qual dos valores e menor
@@ -183,7 +201,6 @@ def simplex(func, sa):
                 bloq_tmp_value = bloq_aux
                 bloq_tmp = b_
 
-
         print_base(b)
 
          #Altera no vetor base com a nova variavel
@@ -193,6 +210,8 @@ def simplex(func, sa):
 
         #Divide a linha pro pivo ser igual a 1
         mat[new_b[0]] = np.asarray(np.mat(mat[new_b[0]]) / mat[new_b[0]][b_tmp]).reshape(-1).tolist()
+
+        print_matrix(mat)
 
         steps += 1
 
