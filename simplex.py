@@ -13,6 +13,11 @@ def print_matrix(matrix):
             print ''
     print '\n'
 
+def print_base(base):
+    print 'BASE = {',
+    for b_ in base:
+        print ' x%d ' % (b_[1]),
+    print '}'
 
 def simplex(func, sa):
 
@@ -63,7 +68,7 @@ def simplex(func, sa):
     steps = 0
     #Primeira fase
     while True:
-        print b
+        print_base(b)
 
         print 'PASSO %d' % steps
 
@@ -179,9 +184,8 @@ def simplex(func, sa):
                 bloq_tmp = b_
 
 
-        print b
-        print b_tmp
-        print bloq_tmp
+        print_base(b)
+
          #Altera no vetor base com a nova variavel
         b[b.index(bloq_tmp)][1] = b_tmp
 
@@ -201,7 +205,9 @@ def simplex(func, sa):
         if b_[1] < len(result):
             result[b_[1]] = mat[b_[0]][-1]
 
-    # for i, x in enumerate(result):
-    #     print 'x%d = %.2f' % (i + 1, x)
+    for i, x in enumerate(result):
+        print 'x%d = %.2f' % (i + 1, x)
+
+    print 'z = %.2f' % (-mat[0][-1])
 
     return result, -mat[0][-1]
