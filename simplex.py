@@ -49,25 +49,12 @@ def simplex(func, sa):
                 else:
                     eq_['idx'].append(0)
 
-    # print "ENCONTROU A BASE"
-    # print bnew
-
     #Montando matriz do simplex
     mat = [eq['idx'] + [eq['z']] for eq in sa]
 
     #Montando matriz do simplex da funcao objetivo artificial
     w = [0] * (len(mat[0]) - len(w) - 1) + w + [0]
     mat = [w] + mat
-
-    #Definir quem e a base
-    # b = []
-    # for c_idx, col in enumerate(mat[0]):
-    #     if col == 1:
-    #         #Pega linha do pivo
-    #         for r_idx, row in enumerate(mat[1:]):
-    #             if row[c_idx] == 1:
-    #                 b.append([r_idx + 1, c_idx])
-    #                 break
 
     print 'FASE 1\n'
 
@@ -137,25 +124,6 @@ def simplex(func, sa):
     #Removendo as colunas das variaveis artificiais
     if not all(w_ == 0 for w_ in w):
         mat = [x[:-3] + x[-1:] for x in mat]
-
-    #Encontrando a base
-    # b = []
-    # for c_idx, col in enumerate(mat[0]):
-    #     b_row = 0
-
-    #     found_one = 0
-    #     found_not_zero = 0
-
-    #     for r_idx, row in enumerate(mat[1:]):
-
-    #         if row[c_idx] == 1:
-    #             found_one += 1
-    #             b_row = r_idx + 1
-    #         elif row[c_idx] != 0:
-    #             found_not_zero += 1
-
-    #     if found_one == 1 and found_not_zero == 0:
-    #         b.append([b_row, c_idx])
 
     #Montando a matriz do simplex
     f = func + [0] * (len(mat[0]) - len(func))
