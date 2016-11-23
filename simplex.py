@@ -226,11 +226,4 @@ def simplex(func, sa):
         if b_[1] < len(result):
             result[b_[1]] = mat[b_[0]][-1]
 
-    print ''
-
-    for i, x in enumerate(result):
-        print 'x%d = %.2f' % (i + 1, x)
-
-    print '\nz = %.2f' % (-mat[0][-1])
-
     return result, -mat[0][-1]
