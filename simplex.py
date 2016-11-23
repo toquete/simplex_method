@@ -4,13 +4,13 @@ from utils import multiply_array_by_scalar, divide_array_by_scalar, sum_arrays
 def print_matrix(matrix):
     for i_ in range(1, len(matrix[0])):
         x = 'x%d' % i_
-        print x.rjust(6),
-    print '     z',
+        print x.rjust(8),
+    print 'z'.rjust(8),
     print '\n'
     for i, row in enumerate(matrix):
 
         for col in row:
-            print '%6.2f' % col,
+            print '%8.2f' % col,
         print ''
         if i == 0:
             print ''
@@ -41,6 +41,7 @@ def simplex(func, sa):
             for i, eq_ in enumerate(sa):
                 if eq_ == eq:
                     if eq_['type'] == 'le':
+                        #Add variavel na base quando for de folga
                         b.append([i + 1, len(eq_['idx'])])
                         eq_['idx'].append(1)
                     else:
@@ -53,6 +54,7 @@ def simplex(func, sa):
         if eq['type'] != 'le':
             for i, eq_ in enumerate(sa):
                 if eq_ == eq:
+                    #Add variavel na base
                     b.append([i + 1, len(eq_['idx'])])
 
                     eq_['idx'].append(1)
@@ -99,8 +101,6 @@ def simplex(func, sa):
 
         print_matrix(mat)
 
-        b_history.append(copy.deepcopy(b))
-
         b_tmp = None
         b_tmp_value = 0
 
@@ -130,12 +130,6 @@ def simplex(func, sa):
 
         #Altera no vetor base com a nova variavel
         b[b.index(bloq_tmp)][1] = b_tmp
-
-        #Verifica se esta voltando pro mesmo ponto
-        if b in b_history:
-            b = b_history[-1]
-            print '\nSOLUCAO ADMITE INFINITAS SOLUCOES\n'
-            break
 
         new_b = b[b.index(bloq_tmp)]
 
@@ -181,6 +175,8 @@ def simplex(func, sa):
 
         print_matrix(mat)
 
+        b_history.append(copy.deepcopy(b))
+
         b_tmp = None
         b_tmp_value = 0
 
@@ -208,22 +204,21 @@ def simplex(func, sa):
                 bloq_tmp_value = bloq_aux
                 bloq_tmp = b_
 
-        # print_base(b)
-
          #Altera no vetor base com a nova variavel
         b[b.index(bloq_tmp)][1] = b_tmp
+
+        #Verifica se esta voltando pro mesmo ponto
+        if b in b_history:
+            b = b_history[-1]
+            print '\nSOLUCAO ADMITE INFINITAS SOLUCOES\n'
+            break
 
         new_b = b[b.index(bloq_tmp)]
 
         #Divide a linha pro pivo ser igual a 1
         mat[new_b[0]] = divide_array_by_scalar(copy.deepcopy(mat[new_b[0]]), mat[new_b[0]][b_tmp])
 
-        # print_matrix(mat)
-
         steps += 1
-
-        if steps == 10:
-            break
 
     result = [0] * len(func)
 
