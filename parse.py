@@ -1,4 +1,12 @@
-def parse(str):
+import re
+
+def parse_function(str):
+    function = str.replace(' ', '')
+    function = filter(lambda x: x, re.split(r'x\d', function))
+
+    return [float(x) for x in function]
+
+def parse_restriction(str):
     eq = {}
     sep = ''
     

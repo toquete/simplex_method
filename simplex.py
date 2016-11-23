@@ -1,8 +1,10 @@
 import numpy as np
 
 def print_matrix(matrix):
-    for xablau in range(1, len(matrix[0]) + 1):
-        print '%6d' % xablau,
+    for i_ in range(1, len(matrix[0])):
+        x = 'x%d' % i_
+        print x.rjust(6),
+    print '     z',
     print '\n'
     for i, row in enumerate(matrix):
 
@@ -11,13 +13,12 @@ def print_matrix(matrix):
         print ''
         if i == 0:
             print ''
-    print '\n'
 
 def print_base(base):
-    print 'BASE = {',
+    print '\nBASE = {',
     for b_ in base:
         print ' x%d ' % (b_[1] + 1),
-    print '}'
+    print '}\n'
 
 def simplex(func, sa):
 
@@ -70,7 +71,8 @@ def simplex(func, sa):
     w = [0] * (len(mat[0]) - len(w) - 1) + w + [0]
     mat = [w] + mat
 
-    print 'FASE 1\n'
+    print ' FASE 1 '.center(70, '-')
+    print ''
 
     print_matrix(mat)
 
@@ -80,7 +82,7 @@ def simplex(func, sa):
 
         print_base(b)
 
-        print 'PASSO %d' % steps
+        print 'PASSO %d\n' % steps
 
         for b_ in b:
 
@@ -152,13 +154,18 @@ def simplex(func, sa):
     f = func + [0] * (len(mat[0]) - len(func))
     mat = [f] + mat[1:]
 
-    print 'FASE 2\n'
+    print '\n'
+    print ' FASE 2 '.center(70, '-')
+    print ''
+
     print_matrix(mat)
 
     steps = 0
     #Segunda fase
     while True:
-        print 'PASSO %d' % steps
+        print_base(b)
+
+        print 'PASSO %d\n' % steps
 
         for b_ in b:
 
@@ -201,7 +208,7 @@ def simplex(func, sa):
                 bloq_tmp_value = bloq_aux
                 bloq_tmp = b_
 
-        print_base(b)
+        # print_base(b)
 
          #Altera no vetor base com a nova variavel
         b[b.index(bloq_tmp)][1] = b_tmp
@@ -211,7 +218,7 @@ def simplex(func, sa):
         #Divide a linha pro pivo ser igual a 1
         mat[new_b[0]] = np.asarray(np.mat(mat[new_b[0]]) / mat[new_b[0]][b_tmp]).reshape(-1).tolist()
 
-        print_matrix(mat)
+        # print_matrix(mat)
 
         steps += 1
 
@@ -224,9 +231,11 @@ def simplex(func, sa):
         if b_[1] < len(result):
             result[b_[1]] = mat[b_[0]][-1]
 
+    print ''
+
     for i, x in enumerate(result):
         print 'x%d = %.2f' % (i + 1, x)
 
-    print 'z = %.2f' % (-mat[0][-1])
+    print '\nz = %.2f' % (-mat[0][-1])
 
     return result, -mat[0][-1]
