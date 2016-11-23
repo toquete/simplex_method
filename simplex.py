@@ -1,4 +1,5 @@
-import numpy as np
+import copy
+from utils import multiply_array_by_scalar, divide_array_by_scalar, sum_arrays
 
 def print_matrix(matrix):
     for i_ in range(1, len(matrix[0])):
@@ -91,14 +92,13 @@ def simplex(func, sa):
                 if r_idx != b_[0]:
                     coefficient = -(row[b_[1]] / mat[b_[0]][b_[1]])
 
-                    m_row = np.mat(row)
-                    m_row_base = np.mat(mat[b_[0]])
+                    m_row = copy.deepcopy(row)
+                    m_row_base = copy.deepcopy(mat[b_[0]])
 
-                    mat[r_idx] = np.asarray(m_row + (m_row_base * coefficient)).reshape(-1).tolist()
+                    mat[r_idx] = sum_arrays(m_row, (multiply_array_by_scalar(m_row_base, coefficient)))
 
         print_matrix(mat)
 
-        import copy
         b_history.append(copy.deepcopy(b))
 
         b_tmp = None
@@ -140,7 +140,7 @@ def simplex(func, sa):
         new_b = b[b.index(bloq_tmp)]
 
         #Divide a linha pro pivo ser igual a 1
-        mat[new_b[0]] = np.asarray(np.mat(mat[new_b[0]]) / mat[new_b[0]][b_tmp]).reshape(-1).tolist()
+        mat[new_b[0]] = divide_array_by_scalar(copy.deepcopy(mat[new_b[0]]), mat[new_b[0]][b_tmp])
 
         steps += 1
 
@@ -174,10 +174,10 @@ def simplex(func, sa):
                 if r_idx != b_[0]:
                     coefficient = -(row[b_[1]] / mat[b_[0]][b_[1]])
 
-                    m_row = np.mat(row)
-                    m_row_base = np.mat(mat[b_[0]])
+                    m_row = copy.deepcopy(row)
+                    m_row_base = copy.deepcopy(mat[b_[0]])
 
-                    mat[r_idx] = np.asarray(m_row + (m_row_base * coefficient)).reshape(-1).tolist()
+                    mat[r_idx] = sum_arrays(m_row, (multiply_array_by_scalar(m_row_base, coefficient)))
 
         print_matrix(mat)
 
@@ -216,7 +216,7 @@ def simplex(func, sa):
         new_b = b[b.index(bloq_tmp)]
 
         #Divide a linha pro pivo ser igual a 1
-        mat[new_b[0]] = np.asarray(np.mat(mat[new_b[0]]) / mat[new_b[0]][b_tmp]).reshape(-1).tolist()
+        mat[new_b[0]] = divide_array_by_scalar(copy.deepcopy(mat[new_b[0]]), mat[new_b[0]][b_tmp])
 
         # print_matrix(mat)
 
