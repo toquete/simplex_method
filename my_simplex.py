@@ -43,3 +43,5 @@ if obj == 'max':
     z *= -1
 
 print '\nz = %.2f' % z
+
+raw_input()
